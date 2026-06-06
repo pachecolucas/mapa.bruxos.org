@@ -1,3 +1,5 @@
+"use server";
+
 import { calcularPlanetas, Planeta as PlanetaBackend } from "./astro/planetas";
 import { Aspecto, calcularAspectos } from "./astro/aspectos";
 import { calcularCasas, ResultadoCasas, SistemaCasas } from "./astro/casas";

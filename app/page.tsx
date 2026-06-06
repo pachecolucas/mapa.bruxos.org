@@ -2,13 +2,13 @@ import Home from "./home";
 import { DadosNatais, getCeu } from "./model";
 
 export default async function Page() {
-  const entrada: DadosNatais = DADOS_NATAIS.taciana;
+  const dados: DadosNatais = DADOS_NATAIS.taciana;
 
-  const ceu = await getCeu(entrada);
+  const ceu = await getCeu(dados);
 
   return (
     <div>
-      <Home ceu={ceu} />
+      <Home ceu={ceu} dados={dados} />
     </div>
   );
 }
