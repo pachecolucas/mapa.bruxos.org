@@ -1,4 +1,5 @@
 import * as sweph from "sweph";
+import { DadosNatais } from "..";
 
 /**
  * PASSO 1 — Cálculo das casas astrológicas.
@@ -23,23 +24,6 @@ export type SistemaCasas =
   | "C" // Campanus
   | "A" // Casas iguais (Equal)
   | "W"; // Signo inteiro (Whole sign)
-
-export interface DadosNatais {
-  ano: number; // ex.: 1984
-  mes: number; // 1-12
-  dia: number; // 1-31
-  hora: number; // hora LOCAL, 0-23
-  minuto: number; // 0-59
-  segundo?: number; // 0-59 (opcional)
-  /** Offset do fuso em horas, onde `local = UT + utcOffset`. Ex.: Brasília = -3. */
-  utcOffset: number;
-  /** Latitude em graus decimais. Sul negativo. Ex.: 28°28'S → -28.466667 */
-  latitude: number;
-  /** Longitude em graus decimais. Oeste negativo. Ex.: 49°00'25"W → -49.006944 */
-  longitude: number;
-  /** Sistema de casas. Padrão: Placidus ('P'). */
-  sistemaCasas?: SistemaCasas;
-}
 
 /** Uma posição na eclíptica, decomposta em signo/grau/minuto/segundo. */
 export interface PosicaoZodiacal {
