@@ -10,6 +10,7 @@ type Props = {
 };
 
 export default function Index({ ceu: ceuInicial, dados: dadosInicial }: Props) {
+  // https://app.epanel.com.br/api/v1/1/bruxos/cidade?search=imarui
   const [dados, setDados] = useState(dadosInicial);
   const [ceu, setCeu] = useState(ceuInicial);
 
