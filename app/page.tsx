@@ -5,6 +5,18 @@ import { calcularCasas, DadosNatais, ResultadoCasas } from "@/lib/casas";
 import { Casa, Planeta } from "@/components/Mapa/types";
 
 const DADOS_NATAIS: Record<string, DadosNatais> = {
+  taciana: {
+    ano: 1988,
+    mes: 11,
+    dia: 11,
+    hora: 11,
+    minuto: 30,
+    segundo: 0,
+    utcOffset: -2,
+    latitude: -(27 + 6 / 60),
+    longitude: -(49 + 0 / 59 + 53 / 3600),
+    sistemaCasas: "P",
+  },
   lucas: {
     ano: 1984,
     mes: 12,
@@ -20,7 +32,7 @@ const DADOS_NATAIS: Record<string, DadosNatais> = {
 };
 
 export default async function Page() {
-  const entrada: DadosNatais = DADOS_NATAIS.lucas;
+  const entrada: DadosNatais = DADOS_NATAIS.taciana;
 
   const planetasRaw = calcularPlanetas(entrada);
   const casas = calcularCasas(entrada);
