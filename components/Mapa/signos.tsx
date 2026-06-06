@@ -35,18 +35,18 @@ const ICONE_BASE = pos(rSimbolo, 15); // meio da fatia de Áries
 const ICONE_ROT_BASE = -(90 + 15); // glifo "para cima" apontando radialmente para fora
 
 const signos = [
-  { id: 1, nome: "Áries", icone: "♈", fundo: "fill-amber-400" },
-  { id: 2, nome: "Touro", icone: "♉", fundo: "fill-red-400" },
-  { id: 3, nome: "Gêmeos", icone: "♊", fundo: "fill-blue-400" },
-  { id: 4, nome: "Câncer", icone: "♋", fundo: "fill-green-400" },
-  { id: 5, nome: "Leão", icone: "♌", fundo: "fill-amber-400" },
-  { id: 6, nome: "Virgem", icone: "♍", fundo: "fill-red-400" },
-  { id: 7, nome: "Libra", icone: "♎", fundo: "fill-blue-400" },
-  { id: 8, nome: "Escorpião", icone: "♏", fundo: "fill-green-400" },
-  { id: 9, nome: "Sagitário", icone: "♐", fundo: "fill-amber-400" },
-  { id: 10, nome: "Capricórnio", icone: "♑", fundo: "fill-red-400" },
-  { id: 11, nome: "Aquário", icone: "♒", fundo: "fill-blue-400" },
-  { id: 12, nome: "Peixes", icone: "♓", fundo: "fill-green-400" },
+  { id: 1, nome: "Áries", caracter: "a", fundo: "fill-amber-400" },
+  { id: 2, nome: "Touro", caracter: "b", fundo: "fill-red-400" },
+  { id: 3, nome: "Gêmeos", caracter: "c", fundo: "fill-blue-400" },
+  { id: 4, nome: "Câncer", caracter: "d", fundo: "fill-green-400" },
+  { id: 5, nome: "Leão", caracter: "e", fundo: "fill-amber-400" },
+  { id: 6, nome: "Virgem", caracter: "f", fundo: "fill-red-400" },
+  { id: 7, nome: "Libra", caracter: "g", fundo: "fill-blue-400" },
+  { id: 8, nome: "Escorpião", caracter: "h", fundo: "fill-green-400" },
+  { id: 9, nome: "Sagitário", caracter: "i", fundo: "fill-amber-400" },
+  { id: 10, nome: "Capricórnio", caracter: "j", fundo: "fill-red-400" },
+  { id: 11, nome: "Aquário", caracter: "k", fundo: "fill-blue-400" },
+  { id: 12, nome: "Peixes", caracter: "l", fundo: "fill-green-400" },
 ];
 
 interface RodaZodiacoProps {
@@ -79,9 +79,9 @@ export default function RodaZodiaco({ casas, planetas, aspectos, className, long
             transform={`rotate(${ICONE_ROT_BASE} ${ICONE_BASE.x} ${ICONE_BASE.y})`}
             textAnchor="middle"
             dominantBaseline="central"
-            className="fill-white text-[18px]"
+            className="fill-white text-[18px] font-astro"
           >
-            {s.icone}
+            {s.caracter}
           </text>
 
           {/* decanatos */}
@@ -102,7 +102,6 @@ export default function RodaZodiaco({ casas, planetas, aspectos, className, long
       {/* Casas: do centro até a borda interna da faixa. */}
       {casas.map((c) => {
         const l = getLinhaCentral(c.grau);
-        console.log("CASA:", c.numero, c.grau);
         return <line key={c.numero} x1={l.p1.x} y1={l.p1.y} x2={l.p2.x} y2={l.p2.y} className="stroke-neutral-300" strokeWidth={c.nome ? 2 : 1} />;
       })}
 
@@ -137,8 +136,8 @@ export default function RodaZodiaco({ casas, planetas, aspectos, className, long
         return (
           <g key={`pl-${p.id}`}>
             <line x1={linhaExt.p1.x} y1={linhaExt.p1.y} x2={linhaExt.p2.x} y2={linhaExt.p2.y} stroke={p.cor} strokeWidth={1} />
-            <text x={pt.x} y={pt.y} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[14px]">
-              {p.icone}
+            <text x={pt.x} y={pt.y} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[14px] font-astro">
+              {p.icone} {p.grau}
             </text>
             <line x1={linhaInt.p1.x} y1={linhaInt.p1.y} x2={linhaInt.p2.x} y2={linhaInt.p2.y} stroke={p.cor} strokeWidth={1} />
           </g>

@@ -22,100 +22,15 @@ const DADOS_NATAIS: Record<string, DadosNatais> = {
 export default async function Page() {
   const entrada: DadosNatais = DADOS_NATAIS.lucas;
 
-  const ABREV = ["Ari", "Tou", "Gem", "Can", "Leo", "Vir", "Lib", "Esc", "Sag", "Cap", "Aqu", "Pei"];
-  const fmt = (p: { signoIndice: number; grau: number; minuto: number; segundo: number }) =>
-    `${String(p.grau).padStart(2)} ${ABREV[p.signoIndice]} ${String(p.minuto).padStart(2, "0")}'${String(p.segundo).padStart(2, "0")}"`;
-
   const planetasRaw = calcularPlanetas(entrada);
-  console.log("=== PLANETAS (calculado | imagem) ===");
-  for (const pl of planetasRaw) {
-    const flag = pl.retrogrado ? "r" : "d";
-    console.log(`${pl.nome.padEnd(16)} ${fmt(pl)} ${flag}}`);
-  }
 
-  console.log("\n=== ÂNGULOS (das casas) ===");
   const casas = calcularCasas(entrada);
-  console.log("casas", casas);
 
   const planetas = getPlanetas(planetasRaw, casas);
   const aspectos = calcularAspectos(planetas);
 
-  const caracteres = [
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "K",
-    "L",
-    "M",
-    "N",
-    "O",
-    "P",
-    "Q",
-    "R",
-    "S",
-    "T",
-    "U",
-    "V",
-    "W",
-    "X",
-    "Y",
-    "Z",
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
-    "f",
-    "g",
-    "h",
-    "i",
-    "j",
-    "k",
-    "l",
-    "m",
-    "n",
-    "o",
-    "p",
-    "q",
-    "r",
-    "s",
-    "t",
-    "u",
-    "v",
-    "w",
-    "x",
-    "y",
-    "z",
-  ];
-
   return (
     <div>
-      fonte:
-      <table>
-        <tbody>
-          <tr>
-            {caracteres.map((c) => (
-              <td key={c} className="border p-1 text-center">
-                {c}
-              </td>
-            ))}
-          </tr>
-          <tr className="font-astro">
-            {caracteres.map((c) => (
-              <td key={c} className="border p-1 text-center">
-                {c}
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
       <Home casas={getCasas(casas)} planetas={planetas} aspectos={aspectos} longitude={getLongitude(casas)} />
     </div>
   );
@@ -158,19 +73,19 @@ function getCasas(casas: ResultadoCasas): Casa[] {
  * (decisão de visualização, não de cálculo). Mais tarde pode migrar
  * para junto da lista CORPOS no backend, se preferir uma fonte única.
  */
-const ICONES_PLANETAS: Record<string, string> = {
-  sol: "☉",
-  lua: "☽",
-  mercurio: "☿",
-  venus: "♀",
-  marte: "♂",
-  jupiter: "♃",
-  saturno: "♄",
-  urano: "♅",
-  netuno: "♆",
-  plutao: "♇",
-  nodo: "☊",
-  quiron: "⚷",
+const CARACTERES_PLANETAS: Record<string, string> = {
+  sol: "A",
+  lua: "B",
+  mercurio: "C",
+  venus: "D",
+  marte: "E",
+  jupiter: "F",
+  saturno: "G",
+  urano: "H",
+  netuno: "I",
+  plutao: "J",
+  nodo: "K",
+  quiron: "N",
 };
 
 /**
@@ -179,14 +94,14 @@ const ICONES_PLANETAS: Record<string, string> = {
  */
 const CORES_PLANETAS: Record<string, string> = {
   sol: "#D4A017", // dourado
-  lua: "#9CA3AF", // cinza claro (branco some no fundo claro)
+  lua: "#4ADE80", // green
   mercurio: "#F97316", // laranja
   venus: "#EC4899", // rosa
   marte: "#DC2626", // vermelho
-  jupiter: "#000000", // preto (não especificado)
+  jupiter: "#fbbf24", // dourado
   saturno: "#6B7280", // cinza
   urano: "#2563EB", // azul
-  netuno: "#60A5FA", // azul claro
+  netuno: "#4ADE80", //
   plutao: "#000000", // preto
   nodo: "#000000", // preto (não especificado)
   quiron: "#000000", // preto (não especificado)
@@ -204,7 +119,7 @@ function getPlanetas(planetas: PlanetaBackend[], casas: ResultadoCasas): Planeta
   return planetas.map((p) => ({
     id: p.id,
     nome: p.nome,
-    icone: ICONES_PLANETAS[p.id] ?? "?",
+    icone: CARACTERES_PLANETAS[p.id] ?? "?",
     cor: CORES_PLANETAS[p.id] ?? "#000000",
     grau: getGrau(p.longitude),
     retrogrado: p.retrogrado,
