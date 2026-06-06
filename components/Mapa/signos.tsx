@@ -139,7 +139,7 @@ export default function RodaZodiaco({ casas, planetas, aspectos, className }: Ro
               {p.icone}
             </text>
             <text x={pt.x} y={pt.y + 10} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[5px] font-semibold">
-              {p.grau2}
+              {p.grau}
             </text>
             <text x={pt.x + 5} y={pt.y + 7} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[3px]">
               {p.minuto}

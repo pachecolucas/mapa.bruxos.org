@@ -17,7 +17,7 @@ export interface Planeta {
   retrogrado: boolean;
   // casa / rótulo
   signo: number;
-  grau2: number; // grau dentro do signo (0–29)
+  grau: number; // grau dentro do signo (0–29)
   minuto: number;
   segundo: number;
 }

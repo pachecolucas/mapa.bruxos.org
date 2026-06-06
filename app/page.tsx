@@ -96,7 +96,7 @@ function getPlanetas(planetas: PlanetaBackend[]): Planeta[] {
     retrogrado: p.retrogrado,
     // casa / rótulo
     signo: p.signoIndice,
-    grau2: p.grau, // grau dentro do signo (0–29) — só para o rótulo
+    grau: p.grau, // grau dentro do signo (0–29) — só para o rótulo
     minuto: p.minuto,
     segundo: p.segundo,
   }));
