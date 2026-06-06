@@ -8,15 +8,13 @@ type Props = {
   casas: Casa[];
   planetas: Planeta[];
   aspectos: Aspecto[];
-  longitude: number;
 };
 
-export default function Index({ casas, longitude, planetas, aspectos }: Props) {
-  console.log({ casas, planetas, aspectos, longitude });
+export default function Index({ casas, planetas, aspectos }: Props) {
   return (
     <div className="flex justify-center">
       <div className="w-full max-w-180">
-        <Mapa casas={casas} planetas={planetas} aspectos={aspectos} longitude={longitude} />
+        <Mapa casas={casas} planetas={planetas} aspectos={aspectos} />
       </div>
     </div>
   );

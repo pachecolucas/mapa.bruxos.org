@@ -1,38 +1,30 @@
 /**
- * Roda zodiacal — 12 signos por rotação de uma fatia-base.
- *
- * Em vez de recalcular 12 paths, desenhamos UMA fatia-base (Áries, 0°–30°) e a
- * giramos com transform="rotate(-30·i, cx, cy)". O ícone vai DENTRO do mesmo
- * grupo, então herda a rotação: pré-rotacionado para a orientação radial de
- * Áries, ele fica corretamente orientado em todas as posições. Resultado: o
- * "topo" do glifo sempre aponta para fora, e os de baixo ficam de cabeça para
- * baixo (centro de gravidade voltado ao centro da roda).
- *
- * Sentido SVG: rotate(+) é horário (Y para baixo); nossa roda cresce anti-
- * horário, então giramos por -30·i.
+ * Roda zodiacal com ASCENDENTE FIXO à esquerda (9 h).
+ * Tudo (signos, casas, planetas, aspectos) é desenhado em longitude absoluta,
+ * porém rotacionado por -ascLong: o grau do AC cai sempre no horizonte esquerdo
+ * e os signos giram em volta. ascLong vem da cúspide da casa "AC".
  */
 
 import { Casa, Planeta } from "./types";
 import type { Aspecto } from "@/lib/aspectos";
 
-const V = 400; // sistema de coordenadas interno (viewBox)
+const V = 400;
 const cx = V / 2;
 const cy = V / 2;
 const rExterno = V / 2 - 4;
-const rCentro = rExterno - 40; // círculo que tampa o miolo
-const rSimbolo = (rExterno + rCentro) / 2; // ícone no meio da faixa
-const rPlaneta = 138; // raio onde o glifo do planeta é desenhado
-const rLinhaExternaIni = rCentro; // 156 — borda interna da faixa dos signos
-const rLinhaExternaFim = 148; // pára antes do glifo (gap de 10)
-const rLinhaInternaIni = 128; // começa depois do glifo (gap de 10)
-const rLinhaInternaFim = 118; // ponto-âncora p/ aspectos no futuro
+const rCentro = rExterno - 40;
+const rSimbolo = (rExterno + rCentro) / 2;
+const rPlaneta = 138;
+const rLinhaExternaIni = rCentro;
+const rLinhaExternaFim = 148;
+const rLinhaInternaIni = 124;
+const rLinhaInternaFim = 124;
 
 const grausParaRad = (g: number): number => (g * Math.PI) / 180;
 
-// Geometria-base, calculada uma única vez.
 const FATIA_BASE = getFatia(0);
-const ICONE_BASE = pos(rSimbolo, 15); // meio da fatia de Áries
-const ICONE_ROT_BASE = -(90 + 15); // glifo "para cima" apontando radialmente para fora
+const ICONE_BASE = pos(rSimbolo, 15);
+const ICONE_ROT_BASE = -(90 + 15);
 
 const signos = [
   { id: 1, nome: "Áries", caracter: "a", fundo: "fill-amber-400" },
@@ -50,29 +42,26 @@ const signos = [
 ];
 
 interface RodaZodiacoProps {
-  /** Classes do container que controlam o tamanho na tela. */
   className?: string;
-  /**
-   * Ângulo (graus, 0–360) onde Áries começa. Ao crescer, Áries — e todos os
-   * demais signos atrás dele — se movem no sentido anti-horário. Padrão 0
-   * (Áries em 9 h). Aqui é onde, no futuro, entra a longitude do Ascendente.
-   */
   casas: Casa[];
   planetas: Planeta[];
   aspectos: Aspecto[];
-  longitude: number;
 }
 
-export default function RodaZodiaco({ casas, planetas, aspectos, className, longitude }: RodaZodiacoProps) {
+export default function RodaZodiaco({ casas, planetas, aspectos, className }: RodaZodiacoProps) {
+  // Longitude absoluta do Ascendente = cúspide da casa "AC".
+  const ascLong = casas.find((c) => c.nome === "AC")?.grau ?? 0;
+  // Converte longitude absoluta para o ângulo de desenho (AC no horizonte esquerdo).
+  const ang = (L: number): number => L - ascLong;
+
   return (
     <svg viewBox={`0 0 ${V} ${V}`} className={`h-auto w-full select-none ${className ?? ""}`} role="img" aria-label="Roda zodiacal com os doze signos">
-      {/* Cada signo: a fatia-base + o ícone, girados juntos.
-          O ângulo inicial soma na rotação, empurrando tudo anti-horário. */}
+      {/* Signos: giram junto. A fatia-base (Áries) é rotacionada para a posição
+          do signo i, já descontando o Ascendente: rotate(ascLong - 30·i). */}
       {signos.map((s, i) => (
-        <g key={s.id} transform={`rotate(${-(longitude + 30 * i)} ${cx} ${cy})`}>
+        <g key={s.id} transform={`rotate(${ascLong - 30 * i} ${cx} ${cy})`}>
           <path d={FATIA_BASE} className={s.fundo} />
 
-          {/* símbolo */}
           <text
             x={ICONE_BASE.x}
             y={ICONE_BASE.y}
@@ -84,7 +73,6 @@ export default function RodaZodiaco({ casas, planetas, aspectos, className, long
             {s.caracter}
           </text>
 
-          {/* decanatos */}
           {[10, 20].map((g) => {
             const linha = getLinhaDecanato(g, 32);
             return <line key={g} x1={linha.p1.x} y1={linha.p1.y} x2={linha.p2.x} y2={linha.p2.y} className="stroke-white" strokeWidth={0.5} />;
@@ -99,15 +87,15 @@ export default function RodaZodiaco({ casas, planetas, aspectos, className, long
       {/* Círculo central que cobre os miolos das fatias */}
       <circle cx={cx} cy={cy} r={rCentro} className="fill-white" />
 
-      {/* Casas: do centro até a borda interna da faixa. */}
+      {/* Casas: grau absoluto convertido por ang(). */}
       {casas.map((c) => {
-        const l = getLinhaCentral(c.grau);
+        const l = getLinhaCentral(ang(c.grau));
         return <line key={c.numero} x1={l.p1.x} y1={l.p1.y} x2={l.p2.x} y2={l.p2.y} className="stroke-neutral-300" strokeWidth={c.nome ? 2 : 1} />;
       })}
 
       {/* Números das casas, no meio de cada casa, junto ao centro */}
       {casas.map((c, i) => {
-        const p = pos(37, meioDaCasa(casas, i));
+        const p = pos(37, ang(meioDaCasa(casas, i)));
         return (
           <text key={`num-${c.numero}`} x={p.x} y={p.y} textAnchor="middle" dominantBaseline="central" className="fill-neutral-500 text-[8px]">
             {c.numero}
@@ -115,54 +103,64 @@ export default function RodaZodiaco({ casas, planetas, aspectos, className, long
         );
       })}
 
-      {/* Aspectos: linhas no miolo conectando os pontos-âncora dos planetas
-          (ponta interna das linhas-marcador). Desenhados antes dos glifos
-          para que os planetas fiquem por cima. */}
+      {/* Marcador do Ascendente: ang(ascLong) = 0 → horizonte esquerdo (9 h). */}
+      {(() => {
+        const linha = getSegmentoRadial(0, rCentro, rExterno);
+        const lbl = pos(rExterno + 12, 0);
+        return (
+          <g>
+            <line x1={linha.p1.x} y1={linha.p1.y} x2={linha.p2.x} y2={linha.p2.y} className="stroke-white" strokeWidth={2} strokeDasharray="3,3" />
+            <text x={lbl.x} y={lbl.y} textAnchor="middle" dominantBaseline="central" className="fill-white text-[10px] font-bold">
+              AC
+            </text>
+          </g>
+        );
+      })()}
+
+      {/* Aspectos: graus em longitude absoluta, convertidos por ang(). */}
       {aspectos
         .filter((a) => a.desenhar)
         .map((a, i) => {
-          const p1 = pos(rLinhaInternaFim, a.graus[0]);
-          const p2 = pos(rLinhaInternaFim, a.graus[1]);
+          const p1 = pos(rLinhaInternaFim, ang(a.graus[0]));
+          const p2 = pos(rLinhaInternaFim, ang(a.graus[1]));
           return <line key={`asp-${i}`} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke={a.cor} strokeWidth={0.8} />;
         })}
 
-      {/* Planetas: glifo no anel interno (rPlaneta), sem rotação radial.
-          Cada planeta vem com duas linhas-marcador radiais (externa e interna)
-          na mesma cor, indicando o grau exato e ladeando o glifo. */}
+      {/* Planetas: posição pela longitude absoluta (via ang); rótulo = grau no signo. */}
       {planetas.map((p) => {
-        const pt = pos(rPlaneta, p.grau);
-        const linhaExt = getSegmentoRadial(p.grau, rLinhaExternaIni, rLinhaExternaFim);
-        const linhaInt = getSegmentoRadial(p.grau, rLinhaInternaIni, rLinhaInternaFim);
+        const a = ang(p.longitude);
+        const pt = pos(rPlaneta, a);
+        const linhaExt = getSegmentoRadial(a, rLinhaExternaIni, rLinhaExternaFim);
+        const linhaInt = getSegmentoRadial(a, rLinhaInternaIni, rLinhaInternaFim);
         return (
           <g key={`pl-${p.id}`}>
             <line x1={linhaExt.p1.x} y1={linhaExt.p1.y} x2={linhaExt.p2.x} y2={linhaExt.p2.y} stroke={p.cor} strokeWidth={1} />
             <text x={pt.x} y={pt.y} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[14px] font-astro">
-              {p.icone} {p.grau}
+              {p.icone}
+            </text>
+            <text x={pt.x} y={pt.y + 10} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[5px] font-semibold">
+              {p.grau2}
+            </text>
+            <text x={pt.x + 5} y={pt.y + 7} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[3px]">
+              {p.minuto}
             </text>
             <line x1={linhaInt.p1.x} y1={linhaInt.p1.y} x2={linhaInt.p2.x} y2={linhaInt.p2.y} stroke={p.cor} strokeWidth={1} />
           </g>
         );
       })}
 
-      {/* Borda externa */}
       <circle cx={cx} cy={cy} r={rExterno} className="fill-none stroke-neutral-300" strokeWidth={1} />
-
-      {/* Círculo central que cobre os miolos das fatias */}
       <circle cx={cx} cy={cy} r={30} className="fill-white stroke-neutral-300" strokeWidth={1} />
     </svg>
   );
 }
 
-/** Ponto sobre o círculo: ângulo 0 fica à esquerda (9 h), cresce anti-horário.
- *  Arredonda para 3 casas: evita hydration mismatch (servidor e navegador
- *  arredondam o último bit de cos/sin de forma levemente diferente). */
 function pos(raio: number, angulo: number) {
   const a = grausParaRad(angulo);
   const arredonda = (n: number) => Math.round(n * 1000) / 1000;
   return { x: arredonda(cx - raio * Math.cos(a)), y: arredonda(cy + raio * Math.sin(a)) };
 }
 
-/** Fatia de pizza (do centro à borda) entre dois ângulos. */
 function getFatia(longitude: number): string {
   const p1 = pos(rExterno, longitude);
   const p2 = pos(rExterno, longitude + 30);
@@ -170,43 +168,25 @@ function getFatia(longitude: number): string {
 }
 
 function getLinhaDecanato(grausDentroDoSigno: number, distanciaDaBordaExterna: number) {
-  // ponto inicial: perto da borda externa
   const p1 = pos(rExterno - distanciaDaBordaExterna, grausDentroDoSigno);
-
-  // ponto final: centro absoluto da roda
-  const p2 = {
-    x: cx,
-    y: cy,
-  };
-
+  const p2 = { x: cx, y: cy };
   return { p1, p2 };
 }
 
-/**
- * Linha radial que sai do centro da roda e para na borda interna da faixa dos
- * signos (rCentro) — ou seja, antes de encontrar a parte periférica colorida.
- * `angulo` posiciona/rotaciona a linha na convenção da roda (0 = 9 h, anti-horário).
- */
 function getLinhaCentral(angulo: number) {
-  const p1 = { x: cx, y: cy }; // centro da roda
-  const p2 = pos(rCentro, angulo); // borda interna da faixa
+  const p1 = { x: cx, y: cy };
+  const p2 = pos(rCentro, angulo);
   return { p1, p2 };
 }
 
-/**
- * Segmento radial entre dois raios no mesmo ângulo. Como ambos os pontos
- * compartilham o ângulo, o segmento é perfeitamente radial (aponta para o
- * centro). Usado para as linhas-marcador dos planetas: uma do signo até
- * antes do glifo, outra depois do glifo descendo em direção ao centro.
- */
 function getSegmentoRadial(angulo: number, r1: number, r2: number) {
   return { p1: pos(r1, angulo), p2: pos(r2, angulo) };
 }
 
-/** Ângulo do meio da casa i (entre sua cúspide e a da próxima), tratando o wrap dos 360°. */
+/** Meio da casa i em longitude ABSOLUTA (resolve o wrap dos 360°). */
 function meioDaCasa(casas: Casa[], i: number): number {
   const a1 = casas[i].grau;
   let a2 = casas[(i + 1) % casas.length].grau;
-  if (a2 < a1) a2 += 360; // desfaz o wrap (a casa 12 vai de ~330 até ~360/0)
+  if (a2 < a1) a2 += 360;
   return ((a1 + a2) / 2) % 360;
 }
