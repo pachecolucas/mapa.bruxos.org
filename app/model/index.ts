@@ -6,6 +6,8 @@ import { calcularCasas, ResultadoCasas, SistemaCasas } from "./astro/casas";
 import { Casa, Planeta } from "@/components/Mapa/types";
 
 export interface DadosNatais {
+  nome: string;
+  cidade: string;
   ano: number; // ex.: 1984
   mes: number; // 1-12
   dia: number; // 1-31

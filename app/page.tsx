@@ -15,6 +15,8 @@ export default async function Page() {
 
 const DADOS_NATAIS: Record<string, DadosNatais> = {
   taciana: {
+    nome: "Taciana Floriani",
+    cidade: "Taió",
     ano: 1988,
     mes: 11,
     dia: 11,
@@ -27,6 +29,8 @@ const DADOS_NATAIS: Record<string, DadosNatais> = {
     sistemaCasas: "P",
   },
   lucas: {
+    nome: "Lucas Pacheco Teixeira",
+    cidade: "Tubarão",
     ano: 1984,
     mes: 12,
     dia: 1,
