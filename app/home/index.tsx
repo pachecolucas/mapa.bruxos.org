@@ -20,26 +20,31 @@ export default function Index({ cadastros, ceu: ceuInicial, cadastro: cadastroIn
   const [cidades, setCidades] = useState<Cidade[]>([]);
 
   async function handleChangeCadastro(c: Cadastro, cidade?: Cidade) {
+    let novoCadastro = { ...c };
+    console.log("handleChangeCadastro", c, novoCadastro);
     if (cidade) {
-      const { utcOffset } = await cadastro_getById(c.id, cidade);
-      c.utcOffset = utcOffset;
+      console.log("cidade", cidade);
+      novoCadastro = await cadastro_getById(c.id, cidade);
     }
-    setCadastro(c);
-    setSearchCidade(c.cidade.nome);
-    const novoCeu = await getCeu(c);
+    console.log({ novoCadastro });
+    setCadastro(novoCadastro);
+    setSearchCidade(novoCadastro.cidade.nome);
+    const novoCeu = await getCeu(novoCadastro);
     setCeu(novoCeu);
   }
 
   async function handleSearchCidade(search: string) {
+    console.log("handleSearchCidade", search);
     setSearchCidade(search);
     const cidadeList = await getCidades(search);
     setCidades(cidadeList);
   }
 
   async function handleChangeCidade(cidade: Cidade) {
-    setCadastro({ ...cadastro, cidade });
+    console.log("handleChangeCidade", cidade);
     setCidades([]);
-    setSearchCidade("");
+    setSearchCidade(cidade.nome);
+    handleChangeCadastro({ ...cadastro }, cidade);
   }
 
   return (
@@ -60,7 +65,24 @@ export default function Index({ cadastros, ceu: ceuInicial, cadastro: cadastroIn
           UTC)
         </div>
         <div>
-          lon: {cadastro.cidade.longitude} lat: {cadastro.cidade.latitude}
+          lon:{" "}
+          <input
+            type="number"
+            min={-90}
+            max={90}
+            value={cadastro.cidade.longitude}
+            onChange={(e) => handleChangeCadastro({ ...cadastro, cidade: { ...cadastro.cidade, longitude: +e.target.value } })}
+            className="w-30"
+          />{" "}
+          lat:
+          <input
+            type="number"
+            min={-90}
+            max={90}
+            value={cadastro.cidade.latitude}
+            onChange={(e) => handleChangeCadastro({ ...cadastro, cidade: { ...cadastro.cidade, latitude: +e.target.value } })}
+            className="w-30"
+          />
         </div>
         <div className="relative">
           <input type="text" value={searchCidade} onChange={(e) => handleSearchCidade(e.target.value)} />
@@ -77,20 +99,19 @@ export default function Index({ cadastros, ceu: ceuInicial, cadastro: cadastroIn
             </div>
           )}
         </div>
-        <div className="flex gap-2">
-          <label>Cidade</label>
-        </div>
-        <div className="flex gap-2">
-          <label>Mapas</label>
-          {cadastros.map((c) => (
-            <div key={c.id} onClick={() => handleChangeCadastro(c)}>
-              {c.nome}
-            </div>
-          ))}
-        </div>
         <Mapa ceu={ceu} />
       </div>
       <div>
+        <label className="font-semibold">Mapas</label>
+        <div className="flex gap-2">
+          <div className="flex flex-col cursor-pointer">
+            {cadastros.map((c) => (
+              <div key={c.id} onClick={() => handleChangeCadastro(c)} className="hover:font-semibold">
+                {c.nome}
+              </div>
+            ))}
+          </div>
+        </div>
         <pre className="text-xs">{JSON.stringify(cadastro, null, 2)}</pre>
       </div>
     </div>
