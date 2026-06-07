@@ -2,27 +2,12 @@
 
 import { calcularPlanetas, Planeta as PlanetaBackend } from "./astro/planetas";
 import { Aspecto, calcularAspectos } from "./astro/aspectos";
-import { calcularCasas, ResultadoCasas, SistemaCasas } from "./astro/casas";
+import { calcularCasas, ResultadoCasas } from "./astro/casas";
 import { Casa, Planeta } from "@/components/Mapa/types";
-
-export interface DadosNatais {
-  nome: string;
-  cidade: string;
-  ano: number; // ex.: 1984
-  mes: number; // 1-12
-  dia: number; // 1-31
-  hora: number; // hora LOCAL, 0-23
-  minuto: number; // 0-59
-  segundo?: number; // 0-59 (opcional)
-  /** Offset do fuso em horas, onde `local = UT + utcOffset`. Ex.: Brasília = -3. */
-  utcOffset: number;
-  /** Latitude em graus decimais. Sul negativo. Ex.: 28°28'S → -28.466667 */
-  latitude: number;
-  /** Longitude em graus decimais. Oeste negativo. Ex.: 49°00'25"W → -49.006944 */
-  longitude: number;
-  /** Sistema de casas. Padrão: Placidus ('P'). */
-  sistemaCasas?: SistemaCasas;
-}
+import { cidade_list } from "./cidade";
+import { DateTime } from "luxon";
+import sweph from "sweph";
+import { Cadastro } from "./cadastro";
 
 export type Ceu = {
   planetas: Planeta[];
@@ -30,7 +15,7 @@ export type Ceu = {
   aspectos: Aspecto[];
 };
 
-export async function getCeu(entrada: DadosNatais) {
+export async function getCeu(entrada: Cadastro) {
   const planetasRaw = calcularPlanetas(entrada);
   const casasRaw = calcularCasas(entrada);
   const aspectos = calcularAspectos(planetasRaw.map((p) => ({ id: p.id, grau: p.longitude })));
@@ -109,4 +94,33 @@ function getPlanetas(planetas: PlanetaBackend[]): Planeta[] {
     minuto: p.minuto,
     segundo: p.segundo,
   }));
+}
+
+export async function getCidades(search: string) {
+  return await cidade_list(search);
+}
+
+// substitui o utcOffset manual: recebe a hora LOCAL + a zona IANA da cidade
+export async function getUtc(dados: Cadastro) {
+  const dt = DateTime.fromObject(
+    {
+      year: dados.ano,
+      month: dados.mes,
+      day: dados.dia,
+      hour: dados.hora,
+      minute: dados.minuto,
+      second: dados.segundo ?? 0,
+    },
+    { zone: dados.cidade.timezone }, // ex.: "America/Sao_Paulo"
+  );
+
+  if (!dt.isValid) {
+    throw new Error(`Data/zona inválida: ${dt.invalidReason} — ${dt.invalidExplanation}`);
+  }
+
+  const utc = dt.toUTC(); // instante absoluto em UTC
+
+  // ATENÇÃO: use os componentes do UTC, não os locais — perto da meia-noite o dia muda.
+  const horaUT = utc.hour + utc.minute / 60 + utc.second / 3600;
+  return sweph.julday(utc.year, utc.month, utc.day, horaUT, sweph.constants.SE_GREG_CAL);
 }

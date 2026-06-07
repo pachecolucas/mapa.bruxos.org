@@ -1,6 +1,7 @@
 import * as sweph from "sweph";
 import path from "node:path";
-import { decompor, dadosParaJD, type DadosNatais, type PosicaoZodiacal } from "./casas";
+import { decompor, dadosParaJD, type PosicaoZodiacal } from "./casas";
+import { Cadastro } from "../cadastro";
 
 /**
  * PASSO 2 — Posições dos planetas (e demais corpos).
@@ -54,7 +55,7 @@ function garantirEfemerides(): void {
 }
 
 /** Calcula as posições de todos os corpos em CORPOS para os dados de nascimento. */
-export function calcularPlanetas(dados: DadosNatais): Planeta[] {
+export function calcularPlanetas(dados: Cadastro): Planeta[] {
   garantirEfemerides();
   const jdUT = dadosParaJD(dados);
   // SWIEPH = usa os arquivos .se1 ; SPEED = também retorna velocidades (p/ retrógrado).

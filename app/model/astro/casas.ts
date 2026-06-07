@@ -1,5 +1,5 @@
 import * as sweph from "sweph";
-import { DadosNatais } from "..";
+import { Cadastro } from "../cadastro";
 
 /**
  * PASSO 1 — Cálculo das casas astrológicas.
@@ -91,18 +91,18 @@ export function decompor(longitude: number): PosicaoZodiacal {
  * julday aceita horas fora de [0,24): trata o rollover de dia automaticamente,
  * então a subtração simples local→UT é segura mesmo cruzando a meia-noite.
  */
-export function dadosParaJD(dados: DadosNatais): number {
+export function dadosParaJD(dados: Cadastro): number {
   const horaLocal = dados.hora + dados.minuto / 60 + (dados.segundo ?? 0) / 3600;
   const horaUT = horaLocal - dados.utcOffset;
   return sweph.julday(dados.ano, dados.mes, dados.dia, horaUT, sweph.constants.SE_GREG_CAL);
 }
 
 /** Calcula as casas astrológicas a partir dos dados de nascimento. */
-export function calcularCasas(dados: DadosNatais): ResultadoCasas {
+export function calcularCasas(dados: Cadastro): ResultadoCasas {
   const sistema = dados.sistemaCasas ?? "P";
   const jdUT = dadosParaJD(dados);
 
-  const res = sweph.houses(jdUT, dados.latitude, dados.longitude, sistema);
+  const res = sweph.houses(jdUT, dados.cidade.latitude, dados.cidade.longitude, sistema);
   if (res.flag < 0) {
     throw new Error(`Falha no cálculo de casas (sweph.houses retornou flag ${res.flag}).`);
   }
