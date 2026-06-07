@@ -93,7 +93,7 @@ export async function cadastro_list(): Promise<Cadastro[]> {
   });
 }
 
-export async function cadastro_getById(id: number): Promise<Cadastro | undefined> {
+export async function cadastro_getById(id: number): Promise<Cadastro> {
   const list = await cadastro_list();
-  return list.find((c) => c.id == id);
+  return list.find((c) => c.id == id)!;
 }

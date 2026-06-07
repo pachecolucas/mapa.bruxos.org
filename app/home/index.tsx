@@ -4,7 +4,7 @@ import Mapa from "@/components/Mapa";
 import { Ceu, getCeu, getCidades } from "../model";
 import { useState } from "react";
 import { Cidade } from "../model/cidade";
-import { Cadastro } from "../model/cadastro";
+import { Cadastro, cadastro_getById } from "../model/cadastro";
 
 type Props = {
   ceu: Ceu;
@@ -20,6 +20,8 @@ export default function Index({ cadastros, ceu: ceuInicial, cadastro: dadosInici
   const [cidades, setCidades] = useState<Cidade[]>([]);
 
   async function handleChangeCadastro(c: Cadastro) {
+    const { utcOffset } = await cadastro_getById(c.id);
+    c.utcOffset = utcOffset;
     setCadastro(c);
     setSearchCidade(c.cidade.nome);
     const novoCeu = await getCeu(c);
