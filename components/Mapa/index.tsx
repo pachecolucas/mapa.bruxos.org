@@ -57,7 +57,7 @@ export default function Mapa({ ceu }: Props) {
       {/* Signos: giram junto. A fatia-base (Áries) é rotacionada para a posição
           do signo i, já descontando o Ascendente: rotate(ascLong - 30·i). */}
       {signos.map((s, i) => (
-        <g key={s.id} transform={`rotate(${ascLong - 30 * i} ${cx} ${cy})`} className="transition-all">
+        <g key={s.id} transform={`rotate(${ascLong - 30 * i} ${cx} ${cy})`} className="transition-all duration-1000 ease-linear">
           <path d={FATIA_BASE} className={s.fundo} />
 
           <text
@@ -131,7 +131,7 @@ export default function Mapa({ ceu }: Props) {
         const linhaExt = getSegmentoRadial(0, rLinhaExternaIni, rLinhaExternaFim);
         const linhaInt = getSegmentoRadial(0, rLinhaInternaIni, rLinhaInternaFim);
         return (
-          <g key={`pl-${p.id}`} transform={`rotate(${-a} ${cx} ${cy})`} className="transition-all">
+          <g key={`pl-${p.id}`} transform={`rotate(${-a} ${cx} ${cy})`} className="transition-all duration-1000 ease-linear">
             <line x1={linhaExt.p1.x} y1={linhaExt.p1.y} x2={linhaExt.p2.x} y2={linhaExt.p2.y} stroke={p.cor} strokeWidth={1} />
 
             {/* contra-rotaciona o texto para mantê-lo na horizontal */}

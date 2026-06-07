@@ -112,6 +112,48 @@ export default function Index({ cadastros, ceu: ceuInicial, cadastro: cadastroIn
             ))}
           </div>
         </div>
+        <br />
+        <div className="flex flex-col">
+          <label className="font-semibold">Céu</label>
+          <label className="text-sm">Ascendente</label>
+          <div>
+            <input
+              type="number"
+              value={ceu.casas[0].grau}
+              min={0}
+              max={360}
+              className="w-full"
+              onChange={(e) => {
+                let grau = +e.target.value;
+                const casas_ = [...ceu.casas];
+                for (const c of casas_) {
+                  c.grau = grau;
+                  grau += 30;
+                }
+                setCeu({ ...ceu, casas: casas_, aspectos: [] });
+              }}
+            />
+          </div>
+          <label className="text-sm">Planetas</label>
+          {ceu.planetas.map((p) => (
+            <div key={p.id}>
+              <span className="font-astro">{p.icone}</span>
+              <input
+                type="number"
+                value={p.longitude}
+                onChange={(e) => {
+                  const planetas_ = ceu.planetas.map((_) => {
+                    if (_.id == p.id) return { ...p, longitude: +e.target.value };
+                    return _;
+                  });
+                  setCeu({ ...ceu, planetas: planetas_, aspectos: [] });
+                }}
+              />
+            </div>
+          ))}
+          <pre className="text-xs">{JSON.stringify(ceu.planetas, null, 2)}</pre>
+        </div>
+        <br />
         <pre className="text-xs">{JSON.stringify(cadastro, null, 2)}</pre>
       </div>
     </div>
