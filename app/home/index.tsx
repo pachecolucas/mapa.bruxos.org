@@ -53,6 +53,31 @@ export default function Index({ cadastros, ceu: ceuInicial, cadastro: cadastroIn
     setCeu(novoCeu);
   }
 
+  function mostraPosicaoPadrao() {
+    const novoCeu = { ...ceu };
+    novoCeu.planetas.find((p) => p.icone == "A")!.longitude = 135;
+    novoCeu.planetas.find((p) => p.icone == "B")!.longitude = 105;
+    novoCeu.planetas.find((p) => p.icone == "C")!.longitude = 75;
+    novoCeu.planetas.find((p) => p.icone == "D")!.longitude = 45;
+    novoCeu.planetas.find((p) => p.icone == "E")!.longitude = 15;
+    novoCeu.planetas.find((p) => p.icone == "F")!.longitude = 255;
+    novoCeu.planetas.find((p) => p.icone == "G")!.longitude = 285;
+    novoCeu.planetas.find((p) => p.icone == "H")!.longitude = 315;
+    novoCeu.planetas.find((p) => p.icone == "I")!.longitude = 345;
+    novoCeu.planetas.find((p) => p.icone == "J")!.longitude = 225;
+    novoCeu.planetas.find((p) => p.icone == "K")!.longitude = 195;
+    novoCeu.planetas.find((p) => p.icone == "N")!.longitude = 165;
+    console.log(novoCeu.planetas);
+    let grauCasa = 0;
+    const casas_ = [...ceu.casas];
+    for (const c of casas_) {
+      c.grau = grauCasa;
+      grauCasa += 30;
+    }
+    novoCeu.aspectos = [];
+    setCeu(novoCeu);
+  }
+
   return (
     <div className="flex justify-center gap-8">
       <div className="w-full max-w-180">
@@ -129,7 +154,12 @@ export default function Index({ cadastros, ceu: ceuInicial, cadastro: cadastroIn
         <br />
         <div className="flex flex-col">
           <label className="font-semibold">Céu</label>
-          <label className="text-sm">Ascendente</label>
+          <label className="text-sm flex gap-1">
+            Ascendente
+            <span onClick={mostraPosicaoPadrao} className="underline cursor-pointer">
+              padrão
+            </span>
+          </label>
           <div>
             <input
               type="number"
