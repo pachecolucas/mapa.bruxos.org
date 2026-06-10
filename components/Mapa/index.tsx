@@ -125,32 +125,34 @@ export default function Mapa({ ceu }: Props) {
         })}
 
       {/* Planetas: posição via transform rotate → transição suave. */}
-      {planetas.map((p) => {
-        const a = ang(p.longitude);
-        const pt = pos(rPlaneta, 0); // base fixa no horizonte esquerdo
-        const linhaExt = getSegmentoRadial(0, rLinhaExternaIni, rLinhaExternaFim);
-        const linhaInt = getSegmentoRadial(0, rLinhaInternaIni, rLinhaInternaFim);
-        return (
-          <g key={`pl-${p.id}`} transform={`rotate(${-a} ${cx} ${cy})`} className="transition-all duration-1000 ease-linear">
-            <line x1={linhaExt.p1.x} y1={linhaExt.p1.y} x2={linhaExt.p2.x} y2={linhaExt.p2.y} stroke={p.cor} strokeWidth={1} />
+      {planetas
+        .filter((p) => p.mostrar)
+        .map((p) => {
+          const a = ang(p.longitude);
+          const pt = pos(rPlaneta, 0); // base fixa no horizonte esquerdo
+          const linhaExt = getSegmentoRadial(0, rLinhaExternaIni, rLinhaExternaFim);
+          const linhaInt = getSegmentoRadial(0, rLinhaInternaIni, rLinhaInternaFim);
+          return (
+            <g key={`pl-${p.id}`} transform={`rotate(${-a} ${cx} ${cy})`} className="transition-all duration-1000 ease-linear">
+              <line x1={linhaExt.p1.x} y1={linhaExt.p1.y} x2={linhaExt.p2.x} y2={linhaExt.p2.y} stroke={p.cor} strokeWidth={1} />
 
-            {/* contra-rotaciona o texto para mantê-lo na horizontal */}
-            <g transform={`rotate(${a} ${pt.x} ${pt.y})`}>
-              <text x={pt.x} y={pt.y} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[14px] font-astro">
-                {p.icone}
-              </text>
-              <text x={pt.x} y={pt.y + 10} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[5px] font-semibold">
-                {p.grau}
-              </text>
-              <text x={pt.x + 5} y={pt.y + 7} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[3px]">
-                {p.minuto}
-              </text>
+              {/* contra-rotaciona o texto para mantê-lo na horizontal */}
+              <g transform={`rotate(${a} ${pt.x} ${pt.y})`}>
+                <text x={pt.x} y={pt.y} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[14px] font-astro">
+                  {p.icone}
+                </text>
+                <text x={pt.x} y={pt.y + 10} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[5px] font-semibold">
+                  {p.grau}
+                </text>
+                <text x={pt.x + 5} y={pt.y + 7} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[3px]">
+                  {p.minuto}
+                </text>
+              </g>
+
+              <line x1={linhaInt.p1.x} y1={linhaInt.p1.y} x2={linhaInt.p2.x} y2={linhaInt.p2.y} stroke={p.cor} strokeWidth={1} />
             </g>
-
-            <line x1={linhaInt.p1.x} y1={linhaInt.p1.y} x2={linhaInt.p2.x} y2={linhaInt.p2.y} stroke={p.cor} strokeWidth={1} />
-          </g>
-        );
-      })}
+          );
+        })}
 
       <circle cx={cx} cy={cy} r={rExterno} className="fill-none stroke-neutral-300" strokeWidth={1} />
       <circle cx={cx} cy={cy} r={30} className="fill-white stroke-neutral-300" strokeWidth={1} />

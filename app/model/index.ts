@@ -93,6 +93,7 @@ function getPlanetas(planetas: PlanetaBackend[]): Planeta[] {
     grau: p.grau, // grau dentro do signo (0–29) — só para o rótulo
     minuto: p.minuto,
     segundo: p.segundo,
+    mostrar: true,
   }));
 }
 

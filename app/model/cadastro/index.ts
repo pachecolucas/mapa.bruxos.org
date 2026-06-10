@@ -66,13 +66,13 @@ const cadastros: Cadastro[] = [
     id: 3,
     nome: "Elisa Floriani Teixeira",
     cidade: {
-      id: 3445993,
-      nome: "Tubarão",
+      id: 3469968,
+      nome: "Blumenau",
       pais: "BR",
-      latitude: -28.46667,
-      longitude: -49.00694,
+      latitude: -26.91944,
+      longitude: -49.06611,
       timezone: "America/Sao_Paulo",
-      populacao: "110088",
+      populacao: "361855",
     },
     ano: 2020,
     mes: 3,
@@ -147,7 +147,7 @@ export async function cadastro_agora(): Promise<Cadastro> {
 
   const agora: Cadastro = {
     id: 0,
-    nome: "Agora 2",
+    nome: "Agora",
     ano: d.getFullYear(),
     mes: d.getMonth() + 1, // getMonth() é 0–11, por isso o +1
     dia: d.getDate(), // getDate() : dia do mês (getDay() seria dia da semana!)

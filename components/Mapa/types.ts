@@ -20,4 +20,5 @@ export interface Planeta {
   grau: number; // grau dentro do signo (0–29)
   minuto: number;
   segundo: number;
+  mostrar: boolean;
 }

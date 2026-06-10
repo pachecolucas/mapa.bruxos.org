@@ -5,6 +5,7 @@ import { Ceu, getCeu, getCidades } from "../model";
 import { useState } from "react";
 import { Cidade, cidade_getUtcOffset } from "../model/cidade";
 import { Cadastro, cadastro_agora, cadastro_getById } from "../model/cadastro";
+import { Planeta } from "@/components/Mapa/types";
 
 type Props = {
   ceu: Ceu;
@@ -26,10 +27,8 @@ export default function Index({ cadastros, ceu: ceuInicial, cadastro: cadastroIn
 
   async function handleChangeCadastro(c: Cadastro) {
     const novoCadastro = { ...c };
-    if (cadastro.cidade?.id != novoCadastro.cidade?.id) {
-      novoCadastro.utcOffset = await cidade_getUtcOffset(novoCadastro);
-      console.log(novoCadastro.cidade);
-    }
+    novoCadastro.utcOffset = await cidade_getUtcOffset(novoCadastro);
+    console.log(novoCadastro);
     afterChangeCadastro(novoCadastro);
   }
 
@@ -44,6 +43,13 @@ export default function Index({ cadastros, ceu: ceuInicial, cadastro: cadastroIn
     setSearchCidade(novoCadastro.cidade.nome);
     setCidades([]);
     const novoCeu = await getCeu(novoCadastro);
+    setCeu(novoCeu);
+  }
+
+  async function toggleMostrar(p: Planeta) {
+    p.mostrar = !p.mostrar;
+    const novoCeu = { ...ceu };
+    novoCeu.aspectos = [];
     setCeu(novoCeu);
   }
 
@@ -144,7 +150,8 @@ export default function Index({ cadastros, ceu: ceuInicial, cadastro: cadastroIn
           </div>
           <label className="text-sm">Planetas</label>
           {ceu.planetas.map((p) => (
-            <div key={p.id}>
+            <div key={p.id} className="flex gap-1 items-center">
+              <input type="checkbox" checked={p.mostrar} onChange={() => toggleMostrar(p)} />
               <span className="font-astro">{p.icone}</span>
               <input
                 type="number"
@@ -159,10 +166,7 @@ export default function Index({ cadastros, ceu: ceuInicial, cadastro: cadastroIn
               />
             </div>
           ))}
-          <pre className="text-xs">{JSON.stringify(ceu.planetas, null, 2)}</pre>
         </div>
-        <br />
-        <pre className="text-xs">{JSON.stringify(cadastro, null, 2)}</pre>
       </div>
     </div>
   );
