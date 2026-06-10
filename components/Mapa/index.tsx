@@ -14,11 +14,19 @@ const cy = V / 2;
 const rExterno = V / 2 - 4;
 const rCentro = rExterno - 40;
 const rSimbolo = (rExterno + rCentro) / 2;
-const rPlaneta = 138;
+const rPlaneta = 135;
 const rLinhaExternaIni = rCentro;
-const rLinhaExternaFim = 148;
-const rLinhaInternaIni = 124;
-const rLinhaInternaFim = 124;
+const rLinhaExternaFim = 150;
+const rLinhaInternaIni = 114;
+const rLinhaInternaFim = 110;
+
+const planetaIcone = "22px";
+const planetaHora = "6px";
+const planetaHoraX = -2.5;
+const planetaHoraY = 15;
+const planetaMinuto = "5px";
+const planetaMinutoX = 4;
+const planetaMinutoY = 15;
 
 const grausParaRad = (g: number): number => (g * Math.PI) / 180;
 
@@ -138,18 +146,18 @@ export default function Mapa({ ceu }: Props) {
 
               {/* contra-rotaciona o texto para mantê-lo na horizontal */}
               <g transform={`rotate(${a} ${pt.x} ${pt.y})`}>
-                <text x={pt.x} y={pt.y} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[14px] font-astro">
+                <text x={pt.x} y={pt.y} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="font-astro" style={{ fontSize: planetaIcone }}>
                   {p.icone}
                 </text>
-                <text x={pt.x} y={pt.y + 10} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[5px] font-semibold">
-                  {p.grau}
+                <text x={pt.x + planetaHoraX} y={pt.y + planetaHoraY} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="font-semibold" style={{ fontSize: planetaHora }}>
+                  {p.grau.toString().padStart(2, "0")}
                 </text>
-                <text x={pt.x + 5} y={pt.y + 7} textAnchor="middle" dominantBaseline="central" fill={p.cor} className="text-[3px]">
+                <text x={pt.x + planetaMinutoX} y={pt.y + planetaMinutoY} textAnchor="middle" dominantBaseline="central" fill={p.cor} style={{ fontSize: planetaMinuto }}>
                   {p.minuto}
                 </text>
               </g>
 
-              <line x1={linhaInt.p1.x} y1={linhaInt.p1.y} x2={linhaInt.p2.x} y2={linhaInt.p2.y} stroke={p.cor} strokeWidth={1} />
+              {aspectos.length > 0 && <line x1={linhaInt.p1.x} y1={linhaInt.p1.y} x2={linhaInt.p2.x} y2={linhaInt.p2.y} stroke={p.cor} strokeWidth={1} />}
             </g>
           );
         })}
